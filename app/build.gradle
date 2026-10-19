@@ -1,0 +1,51 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.focuslist.app'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'com.focuslist.app'
+        minSdk 26
+        targetSdk 34
+        versionCode 1
+        versionName '1.0'
+    }
+
+    buildTypes {
+        debug {
+            // 调试包，可直接安装
+        }
+        release {
+            minifyEnabled false
+            shrinkResources false
+            // 用调试签名，方便你自己装上试；要上架再换正式签名
+            signingConfig signingConfigs.debug
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    lint {
+        abortOnError false
+    }
+}
+
+dependencies {
+    // 用来把 assets 里的页面以 https 安全域加载（localStorage 才稳）
+    implementation 'androidx.webkit:webkit:1.11.0'
+}
+
+// 构建前把根目录的 index.html 复制进 assets —— 网页和 App 永远同一份
+def copyWebAssets = tasks.register('copyWebAssets', Copy) {
+    from rootProject.file('index.html')
+    into "$projectDir/src/main/assets"
+    doFirst { println "copy web -> src/main/assets/index.html" }
+}
+
+tasks.named('preBuild').configure { dependsOn(copyWebAssets) }

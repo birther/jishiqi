@@ -1,0 +1,4 @@
+// 根工程：只声明 Android Gradle 插件版本
+plugins {
+    id 'com.android.application' version '8.5.2' apply false
+}
